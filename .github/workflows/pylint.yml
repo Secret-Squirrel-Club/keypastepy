@@ -22,5 +22,4 @@ jobs:
         flake8 .
     - name: Running Pytest
       run: |
-        export PYTHONPATH=$PWD
         pytest test/*

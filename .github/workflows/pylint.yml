@@ -20,6 +20,9 @@ jobs:
     - name: Analysing the code with pylint
       run: |
         flake8 .
+    - name: Exporting PYTHONPATH
+      run: |
+        export PYTHONPATH="."
     - name: Running Pytest
       run: |
         pytest test/*

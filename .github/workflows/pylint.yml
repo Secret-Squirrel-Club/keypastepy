@@ -22,7 +22,7 @@ jobs:
         flake8 .
     - name: Exporting PYTHONPATH
       run: 
-        echo $PWD
+        export PYTHONPATH=/home/runner/work/keypastepy/keypastepy
     - name: Running Pytest
       run: |
         pytest test/*

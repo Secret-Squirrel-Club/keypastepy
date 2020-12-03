@@ -21,8 +21,8 @@ jobs:
       run: |
         flake8 .
     - name: Exporting PYTHONPATH
-      run: 
-        export PYTHONPATH=/home/runner/work/keypastepy/keypastepy
+      env:
+        PYTHONPATH: /home/runner/work/keypastepy/keypastepy/
     - name: Running Pytest
       run: |
         pytest test/*

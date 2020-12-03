@@ -21,8 +21,8 @@ jobs:
       run: |
         flake8 .
     - name: Exporting PYTHONPATH
-      run: |
-        export PYTHONPATH="."
+      run: 
+        echo $PWD
     - name: Running Pytest
       run: |
         pytest test/*

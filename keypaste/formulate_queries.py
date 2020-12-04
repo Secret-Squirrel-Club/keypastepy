@@ -18,8 +18,8 @@ class FormulateTable(Formulate):
 
 class FormulateInsertData(Formulate):
     @staticmethod
-    def query(table: str, command: str, paste: str):
-        return f"INSERT INTO {table} (Command, Paste) VALUES ({command}, {paste})"
+    def query(table: str, command: str, p: str):
+        return f"INSERT INTO {table} (Command, Paste) VALUES ({command}, {p})"
 
 
 class FormulateDeleteEntry(Formulate):

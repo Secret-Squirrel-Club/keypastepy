@@ -12,13 +12,15 @@ class Formulate(ABC):
 class FormulateTable(Formulate):
     @staticmethod
     def query(table: str):
-        return f"CREATE TABLE {table} (Command varchar(255), Paste varchar(255));"
+        return f"CREATE TABLE {table} \
+            (Command varchar(255), Paste varchar(255));"
 
 
 class FormulateInsertData(Formulate):
     @staticmethod
     def query(table: str, command: str, paste: str):
-        return f"INSERT INTO {table} (Command, Paste) VALUES ({command}, {paste})"
+        return f"INSERT INTO {table} (Command, Paste) \
+        VALUES ({command}, {paste})"
 
 
 class FormulateDeleteEntry(Formulate):

@@ -19,8 +19,7 @@ class FormulateTable(Formulate):
 class FormulateInsertData(Formulate):
     @staticmethod
     def query(table: str, command: str, paste: str):
-        return f"INSERT INTO {table} (Command, Paste) \
-        VALUES ({command}, {paste})"
+        return f"INSERT INTO {table} (Command, Paste) VALUES ({command}, {paste})"
 
 
 class FormulateDeleteEntry(Formulate):

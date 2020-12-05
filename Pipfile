@@ -6,6 +6,7 @@ name = "pypi"
 [packages]
 flake8 = "*"
 pytest = "*"
+pynput = "*"
 
 [dev-packages]
 

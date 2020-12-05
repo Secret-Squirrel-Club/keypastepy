@@ -4,7 +4,8 @@ from keypaste.formulate_queries import (
     FormulateInsertData,
     FormulateDropTable,
     FormulateDeleteEntry,
-    FormulateTable
+    FormulateTable,
+    FormulateShowTables
 )
 
 
@@ -40,3 +41,7 @@ class TestFormulate(unittest.TestCase):
         self.assertEqual(FormulateDropTable.query(
             "main_table"),
             exp_result)
+    
+    def test_FormulateShowTables(self):
+        exp_result = "SHOW TABLES"
+        self.assertEqual(FormulateShowTables.query(), exp_result)

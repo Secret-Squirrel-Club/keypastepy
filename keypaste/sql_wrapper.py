@@ -1,14 +1,18 @@
 #!/usr/bin/env python3
 
 
+import logging
 from keypaste.base import BaseKeyClass
 import sqlite3
-import logging
-from keypaste.formulate_queries import FormulateShowTables, FormulateViewQuery, FormulateTable
+from keypaste.formulate_queries import FormulateShowTables
+
 
 class Sqler(BaseKeyClass):
-
-    def __init__(self, database: str, timeout=300):
+    
+    def __init__(self, 
+                database: str, 
+                timeout=300):
+        super().__init__()
         self.database = database
         self.timeout = timeout
 
@@ -19,7 +23,7 @@ class Sqler(BaseKeyClass):
             connection = sqlite3.connect(self.database)
             self.info(f"Established Connection version: {sqlite3.version}")
         except Exception as err:
-            self.exception(err)
+            self.error(err)
         if connection:
             self.debug("Closing Database Connection")
             connection.close()
@@ -32,10 +36,7 @@ class Sqler(BaseKeyClass):
             self.debug("Returning connection object")
             return conn
         except sqlite3.Error as err:
-            self.exception(err)
-        finally:
-            self.debug("Closing Database connection")
-            conn.close()
+            self.error(err)
 
     def execute_sql(self, conn, sql_statement):
         try:
@@ -49,12 +50,13 @@ class Sqler(BaseKeyClass):
             self.debug("Closing Database Connection")
             conn.close()
 
+
 class SQLChecker(BaseKeyClass):
-    
+
     def __init__(self, database: str) -> None:
         self.database = database
         self.sqler = Sqler(self.database)
-       
+
     def check_if_table_exists(self):
         query = FormulateShowTables.query()
         connection = self.sqler.connect_to_db()
@@ -64,3 +66,6 @@ class SQLChecker(BaseKeyClass):
             self.exception(e)
             return False
         return True if str(self.database) in results else False
+
+    def check_if_database_exists(self):
+        pass

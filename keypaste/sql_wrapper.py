@@ -1,17 +1,18 @@
 #!/usr/bin/env python3
 
 
-import logging
 from keypaste.base import BaseKeyClass
 import sqlite3
 from keypaste.formulate_queries import FormulateShowTables
 
 
 class Sqler(BaseKeyClass):
-    
-    def __init__(self, 
-                database: str, 
-                timeout=300):
+
+    def __init__(
+        self,
+        database: str,
+        timeout=300
+    ):
         super().__init__()
         self.database = database
         self.timeout = timeout

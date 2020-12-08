@@ -23,6 +23,6 @@ jobs:
     - name: Installing Environment
       run: |
         pipenv sync 
-    - name: Analysing the code with pylint
+    - name: Running Pytest
       run: |
-        pipenv run flake8 .
+        pipenv run pytest test/*

@@ -5,8 +5,8 @@ import getpass
 import os
 from keypaste.sql_wrapper import (
     Sqler,
-    SQLChecker
 )
+
 
 class RunKeypaste(BaseKeyClass):
 
@@ -17,7 +17,7 @@ class RunKeypaste(BaseKeyClass):
     def run(self):
         self.debug(f"Using path: {self.path}")
         if not os.path.isdir(self.path):
-            self.info(f"Directory doesn't exist, creating...")
+            self.info("Directory doesn't exist, creating...")
             os.makedirs(self.path)
         full_path = os.path.join(self.path, "keypaste.db")
         self.debug(f"Using {full_path} as database")
@@ -26,8 +26,10 @@ class RunKeypaste(BaseKeyClass):
             open(f'{full_path}', 'a').close()
         sql = Sqler(full_path)
         conn = sql.connect_to_db()
+        conn.close()
+
+
 if __name__ == "__main__":
     directory = f"/Users/{getpass.getuser()}/.keypaste/"
     run = RunKeypaste(directory)
     run.run()
-

@@ -11,42 +11,30 @@ class Formulate(ABC):
 
 class FormulateTable(Formulate):
     @staticmethod
-    def query(table):
-        return f"""
-           CREATE TABLE {table} (
-           Command varchar(255),
-           Paste varchar(255)
-           );  """
+    def query(table: str):
+        return f"CREATE TABLE {table} \
+            (Command varchar(255), Paste varchar(255));"
 
 
 class FormulateInsertData(Formulate):
     @staticmethod
-    def query(table, command, paste):
-        return f"""
-        INSERT INTO {table} (Command, Paste)
-        VALUES({command}, {paste})
-        """
+    def query(table: str, command: str, p: str):
+        return f"INSERT INTO {table} (Command, Paste) VALUES ({command}, {p})"
 
 
 class FormulateDeleteEntry(Formulate):
     @staticmethod
-    def query(table, command):
-        return f"""
-        DELETE FROM  WHERE Command = {command}
-        """
+    def query(table, command: str):
+        return f"DELETE FROM {table} WHERE Command = {command}"
 
 
-class FormualteViewQuery(Formulate):
+class FormulateViewQuery(Formulate):
     @staticmethod
-    def query(table):
-        return f"""
-        SELECT * FROM {table}
-        """
+    def query(table: str):
+        return f"SELECT * FROM {table}"
 
 
 class FormulateDropTable(Formulate):
     @staticmethod
-    def query(table):
-        return f"""
-        SELECT DROP {table}
-        """
+    def query(table: str):
+        return f"DROP TABLE {table}"

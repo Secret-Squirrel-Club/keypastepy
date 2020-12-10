@@ -38,3 +38,9 @@ class FormulateDropTable(Formulate):
     @staticmethod
     def query(table: str):
         return f"DROP TABLE {table}"
+
+
+class FormulateShowTables(Formulate):
+    @staticmethod
+    def query():
+        return "SHOW TABLES"

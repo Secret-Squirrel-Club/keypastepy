@@ -7,9 +7,11 @@ FROM mcr.microsoft.com/vscode/devcontainers/python:0-${VARIANT}
 # [Option] Install Node.js
 ARG INSTALL_NODE="true"
 ARG NODE_VERSION="lts/*"
+ARG PYTHONPATH="/workspaces/keypastepy/"
 RUN if [ "${INSTALL_NODE}" = "true" ]; then su vscode -c "source /usr/local/share/nvm/nvm.sh && nvm install ${NODE_VERSION} 2>&1"; fi
 RUN git config --global user.name "Nick Shorter" && git config --global user.email nickshorter888@gmail.com
-
+ENV PYTHONPATH=${PYTHONPATH}
+RUN pip3 install pytest flake8 pynput
 # [Optional] If your pip requirements rarely change, uncomment this section to add them to the image.
 # COPY requirements.txt /tmp/pip-tmp/
 # RUN pip3 --disable-pip-version-check --no-cache-dir install -r /tmp/pip-tmp/requirements.txt \

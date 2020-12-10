@@ -1,12 +1,73 @@
 #!/usr/bin/env python3
-import sqlite3
-import logging
-from sqlite3.dbapi2 import Error
-from keypaste.command import Command
-from keypaste.paste import Paste
+from typing import Tuple
 
-class Keypaste():
+
+class Command(object):
+    def __init__(self, command: str) -> None:
+        self.__command = command
+
+    def get_command(self) -> str:
+        return self.__command
+
+    def set_command(self, new_command) -> None:
+        self.__command = new_command
+
+
+class Paste(object):
+    def __init__(self, paste: str):
+        self.__paste = paste
+
+    def get_paste(self) -> str:
+        return self.__paste
+
+    def set_paste(self, new_paste):
+        self.__paste = new_paste
+
+
+class Keypaste(object):
     def __init__(self, command: Command, paste: Paste):
-        self.command = command
-        self.paste = paste
-    
+        if isinstance(command, str):
+            command = Command(command)
+        self.__command = command
+        if isinstance(paste, str):
+            paste = Paste(paste)
+        self.__paste = paste
+
+    def get_keypaste(self) -> Tuple[Command, Paste]:
+        return self.__command, self.__paste
+
+    def set_keypaste(self, new_command: Command, new_paste: Paste):
+        self.__command = new_command
+        self.__paste = new_paste
+
+    def get_command(self) -> Command:
+        return self.__command
+
+    def set_command(self, command: Command):
+        self.__command = command
+
+    def get_paste(self) -> Paste:
+        return self.__paste
+
+    def set_paste(self, new_paste: Paste):
+        self.__paste = new_paste
+
+
+class BuildKeypaste(object):
+
+    @staticmethod
+    def constuct(command: str, paste: str) -> Keypaste:
+        command_obj = Command(command)
+        paste_obj = Paste(paste)
+        return Keypaste(command_obj, paste_obj)
+
+    @staticmethod
+    def deconst_to_cmd_and_paste(keypaste: Keypaste) -> Tuple[Command, Paste]:
+        command_obj = keypaste.get_command()
+        paste_obj = keypaste.get_paste()
+        return command_obj, paste_obj
+
+    @staticmethod
+    def deconst_to_str(keypaste: Keypaste) -> Tuple[str, str]:
+        command, paste = BuildKeypaste.deconst_to_cmd_and_paste(keypaste)
+        return command.get_command(), paste.get_paste()

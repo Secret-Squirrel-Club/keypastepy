@@ -43,4 +43,4 @@ class FormulateDropTable(Formulate):
 class FormulateShowTables(Formulate):
     @staticmethod
     def query():
-        return "SHOW TABLES"
+        return "tables"

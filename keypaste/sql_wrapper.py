@@ -3,6 +3,7 @@
 
 from keypaste.base import BaseKeyClass
 import sqlite3
+import pdb
 from keypaste.formulate_queries import FormulateShowTables
 
 
@@ -56,17 +57,7 @@ class SQLChecker(BaseKeyClass):
 
     def __init__(self, database: str) -> None:
         self.database = database
-        self.sqler = Sqler(self.database)
-
-    def check_if_table_exists(self):
-        query = FormulateShowTables.query()
-        connection = self.sqler.connect_to_db()
-        try:
-            results = self.sqler.execute_sql(connection, query)
-        except Exception as e:
-            self.exception(e)
-            return False
-        return True if str(self.database) in results else False
-
-    def check_if_database_exists(self):
+        self.sqler = Sqler(database)
+    
+    def create_table(self):
         pass

@@ -52,13 +52,17 @@ class Keypaste(object):
 class BuildKeypaste(object):
 
     @staticmethod
-    def constuct_to_obj(command: str, paste: str) -> Keypaste:
+    def construct_from_obj(command: str, paste: str) -> Keypaste:
         command_obj = Command(command)
         paste_obj = Paste(paste)
         return Keypaste(command_obj, paste_obj)
-    
+
     @staticmethod
-    def construct_to_str(command: str, paste: str) -> Keypaste:
+    def construct_from_str(command: str, paste: str) -> Keypaste:
+        if not isinstance(command, str):
+            command = str(command)
+        if not isinstance(paste, str):
+            paste = str(paste)
         return Keypaste(command, paste)
 
     @staticmethod
@@ -69,5 +73,4 @@ class BuildKeypaste(object):
 
     @staticmethod
     def deconst_to_str(keypaste: Keypaste) -> Tuple[str, str]:
-        command, paste = BuildKeypaste.deconst_to_cmd_and_paste(keypaste)
-        return command.get_command(), paste.get_paste()
+        return keypaste.get_command(), keypaste.get_paste()

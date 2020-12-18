@@ -1,11 +1,8 @@
 #!/usr/bin/env python3
 
 
-from sqlite3.dbapi2 import connect
 from keypaste.base import BaseKeyClass
 import sqlite3
-import pdb
-from keypaste.formulate_queries import FormulateShowTables
 
 
 class Sqler(BaseKeyClass):
@@ -28,7 +25,7 @@ class Sqler(BaseKeyClass):
         except Exception as err:
             self.error(err)
             self.close_conn(connection)
-            
+
     def close_conn(self, conn):
         self.debug("Closing Connection")
         return conn.close()
@@ -55,6 +52,7 @@ class Sqler(BaseKeyClass):
         except sqlite3.Error as err:
             self.exception(err)
             self.close_conn
+
 
 class SQLChecker(BaseKeyClass):
 

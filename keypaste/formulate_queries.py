@@ -13,34 +13,35 @@ class FormulateTable(Formulate):
     @staticmethod
     def query(table: str):
         return f"CREATE TABLE {table} \
-            (Command varchar(255), Paste varchar(255));"
+            (Command TEXT, Paste TEXT);"
 
 
 class FormulateInsertData(Formulate):
     @staticmethod
     def query(table: str, command: str, p: str):
-        return f"INSERT INTO {table} (Command, Paste) VALUES ({command}, {p})"
+        return f"INSERT INTO {table} (Command, Paste) \
+            VALUES (\"{command}\", \"{p}\");"
 
 
 class FormulateDeleteEntry(Formulate):
     @staticmethod
     def query(table, command: str):
-        return f"DELETE FROM {table} WHERE Command = {command}"
+        return f"DELETE FROM {table} WHERE Command = \"{command}\";"
 
 
 class FormulateViewQuery(Formulate):
     @staticmethod
     def query(table: str):
-        return f"SELECT * FROM {table}"
+        return f"SELECT * FROM {table};"
 
 
 class FormulateDropTable(Formulate):
     @staticmethod
     def query(table: str):
-        return f"DROP TABLE {table}"
+        return f"DROP TABLE {table};"
 
 
 class FormulateShowTables(Formulate):
     @staticmethod
     def query():
-        return "tables"
+        return "SELECT name FROM sqlite_master WHERE type='table';"

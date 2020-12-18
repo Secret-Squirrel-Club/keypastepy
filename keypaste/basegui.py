@@ -1,39 +1,46 @@
 #!/usr/bin/env python3
 
-import rumps
-import getpass
-import os
-import pdb
 import sys
-from functools import partial
-from PyQt5.QtWidgets import *
-from keypaste.base import BaseKeyClass, KeyPasteException
+from PyQt5.QtWidgets import (
+    QApplication,
+    QWidget,
+    QVBoxLayout,
+    QFormLayout,
+    QLineEdit,
+    QDialogButtonBox,
+    QComboBox,
+    QLabel
+
+)
+from keypaste.base import BaseKeyClass
+
 
 class BaseGUIBuilder(BaseKeyClass):
     def __init__(self):
         super().__init__()
-        self.app = QApplication(sys.argv) 
+        self.app = QApplication(sys.argv)
         self.window = QWidget()
         self.window.setWindowTitle("Keypaste")
-        self.window.setGeometry(100,100,200,200)
-        
+        self.window.setGeometry(100, 100, 200, 200)
+
     def show_window(self):
         self.window.show()
 
     def run_event_loop(self):
         sys.exit(self.app.exec())
-    
+
     def _start_event(self):
         pass
 
     def exit_app(self):
         self.app.exit()
 
+
 class EntryGUI(BaseGUIBuilder):
     def __init__(self):
         super().__init__()
         self._create_entry_widgets()
-    
+
     def _cancel_app(self):
         self.debug("Killing App via cancel button")
         self.exit_app()
@@ -60,11 +67,12 @@ class EntryGUI(BaseGUIBuilder):
         self.show_window()
         self.run_event_loop()
 
+
 class DeleteEntryGUI(BaseGUIBuilder):
     def __init__(self):
         super().__init__()
         self._create_delete_widgets()
-        
+
     def _cancel_app(self):
         self.exit_app()
 
@@ -74,30 +82,31 @@ class DeleteEntryGUI(BaseGUIBuilder):
     def _make_combo(self):
         combo = QComboBox()
         return combo
-    
+
     def _create_delete_widgets(self):
         self.debug("Creating deleting widgets")
         dlgLayout = QVBoxLayout()
         formLayout = QFormLayout()
         formLayout.addRow("Key:", self._make_combo())
         dlgLayout.addLayout(formLayout)
-        btns = QDialogButtonBox() 
+        btns = QDialogButtonBox()
         btns.setStandardButtons(
             QDialogButtonBox.Cancel | QDialogButtonBox.Ok
-        ) 
+        )
         btns.accepted.connect(self._start_event)
         btns.rejected.connect(self._cancel_app)
         dlgLayout.addWidget(btns)
         self.window.setLayout(dlgLayout)
-        
+
         self.show_window()
         self.run_event_loop()
+
 
 class ViewEntriesGUI(BaseGUIBuilder):
     def __init__(self):
         super().__init__()
-        self._create_viewer() 
-    
+        self._create_viewer()
+
     def _cancel_app(self):
         self.exit_app()
 
@@ -109,13 +118,13 @@ class ViewEntriesGUI(BaseGUIBuilder):
         for key, paste in testing.items():
             formLayout.addRow(QLabel(f"{key}"), QLabel(paste))
         dlgLayout.addLayout(formLayout)
-        btns = QDialogButtonBox() 
+        btns = QDialogButtonBox()
         btns.setStandardButtons(
             QDialogButtonBox.Cancel
-        ) 
+        )
         btns.rejected.connect(self._cancel_app)
         dlgLayout.addWidget(btns)
         self.window.setLayout(dlgLayout)
-        
+
         self.show_window()
-        self.run_event_loop() 
+        self.run_event_loop()

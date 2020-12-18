@@ -25,41 +25,41 @@ class Paste(object):
 
 
 class Keypaste(object):
-    def __init__(self, command: Command, paste: Paste):
-        if isinstance(command, str):
-            command = Command(command)
+    def __init__(self, command: str, paste: str):
         self.__command = command
-        if isinstance(paste, str):
-            paste = Paste(paste)
         self.__paste = paste
 
-    def get_keypaste(self) -> Tuple[Command, Paste]:
+    def get_keypaste(self) -> Tuple[str, str]:
         return self.__command, self.__paste
 
-    def set_keypaste(self, new_command: Command, new_paste: Paste):
+    def set_keypaste(self, new_command: str, new_paste: str):
         self.__command = new_command
         self.__paste = new_paste
 
-    def get_command(self) -> Command:
+    def get_command(self) -> str:
         return self.__command
 
-    def set_command(self, command: Command):
+    def set_command(self, command: str):
         self.__command = command
 
-    def get_paste(self) -> Paste:
+    def get_paste(self) -> str:
         return self.__paste
 
-    def set_paste(self, new_paste: Paste):
+    def set_paste(self, new_paste: str):
         self.__paste = new_paste
 
 
 class BuildKeypaste(object):
 
     @staticmethod
-    def constuct(command: str, paste: str) -> Keypaste:
+    def constuct_to_obj(command: str, paste: str) -> Keypaste:
         command_obj = Command(command)
         paste_obj = Paste(paste)
         return Keypaste(command_obj, paste_obj)
+    
+    @staticmethod
+    def construct_to_str(command: str, paste: str) -> Keypaste:
+        return Keypaste(command, paste)
 
     @staticmethod
     def deconst_to_cmd_and_paste(keypaste: Keypaste) -> Tuple[Command, Paste]:

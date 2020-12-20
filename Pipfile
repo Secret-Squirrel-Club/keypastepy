@@ -10,6 +10,7 @@ pynput = "*"
 rumps = "*"
 appjar = "*"
 pyqt5 = "*"
+keyboard = "*"
 
 [dev-packages]
 

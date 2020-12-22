@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 
 from sqlite3.dbapi2 import Connection
+
+from PyQt5.QtCore import QThread
 from keypaste.sql_wrapper import Sqler
 from keypaste.formulate_queries import (
     FormulateInsertData,
@@ -20,7 +22,6 @@ from PyQt5.QtWidgets import (
 
 )
 from keypaste.base import BaseKeyClass
-
 
 class BaseGUIBuilder(BaseKeyClass):
     def __init__(self):
@@ -42,14 +43,20 @@ class BaseGUIBuilder(BaseKeyClass):
     def exit_app(self):
         self.app.exit()
 
-
+class CloneThread(QThread):
+    
+    def __init__(self) -> None:
+        super.__init__(self)
+    
+    def run(self):
+        pass
 class EntryGUI(BaseGUIBuilder):
-    def __init__(self, sql_client: Sqler, sql_conn: Connection):
+    def __init__(self, sql_client: Sqler):
         super().__init__()
         self.key_input = QLineEdit()
         self.paste_input = QLineEdit()
         self.sql_client = sql_client
-        self.sql_conn = sql_conn
+        self.sql_conn = sql_client.connect_to_db()
         self._create_entry_widgets()
 
     def _cancel_app(self):
@@ -91,10 +98,10 @@ class EntryGUI(BaseGUIBuilder):
 
 
 class DeleteEntryGUI(BaseGUIBuilder):
-    def __init__(self, sql_client: Sqler, sql_conn: Connection):
+    def __init__(self, sql_client: Sqler):
         super().__init__()
         self.sql_client = sql_client
-        self.sql_conn = sql_conn
+        self.sql_conn = sql_client.connect_to_db()
         self.combo = QComboBox()
         self._create_delete_widgets()
 
@@ -138,10 +145,10 @@ class DeleteEntryGUI(BaseGUIBuilder):
 
 
 class ViewEntriesGUI(BaseGUIBuilder):
-    def __init__(self, sql_client: Sqler, sql_conn: Connection):
+    def __init__(self, sql_client: Sqler): 
         super().__init__()
         self.sql_client = sql_client
-        self.sql_conn = sql_conn
+        self.sql_conn = sql_client.connect_to_db()
         self._create_viewer()
 
     def _cancel_app(self):

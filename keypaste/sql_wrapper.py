@@ -1,11 +1,19 @@
 #!/usr/bin/env python3
 
 
-from keypaste.base import BaseKeyClass
 import sqlite3
+import logging
 
+formatter = logging.Formatter(
+    "%(levelname)s:%(asctime)s:%(name)s: %(message)s"
+)
+sh = logging.StreamHandler()
+sh.setFormatter(formatter)
+logger = logging.getLogger(__name__)
+logger.addHandler(sh)
+logger.setLevel(logging.DEBUG)
 
-class Sqler(BaseKeyClass):
+class Sqler(object):
 
     def __init__(
         self,
@@ -19,43 +27,36 @@ class Sqler(BaseKeyClass):
     def create_the_db(self):
         connection = None
         try:
-            self.debug("Attempting to connect/create database")
+            logger.debug("Attempting to connect/create database")
             connection = sqlite3.connect(self.database)
-            self.info(f"Established Connection version: {sqlite3.version}")
+            logger.info(f"Established Connection version: {sqlite3.version}")
         except Exception as err:
-            self.error(err)
+            logger.error(err)
             self.close_conn(connection)
 
     def close_conn(self, conn):
-        self.debug("Closing Connection")
+        logger.debug("Closing Connection")
         return conn.close()
 
     def connect_to_db(self):
         conn = None
         try:
-            self.debug("Attempting to connect to database")
+            logger.debug("Attempting to connect to database")
             conn = sqlite3.connect(self.database)
-            self.debug("Returning connection object")
+            logger.debug("Returning connection object")
             return conn
         except sqlite3.Error as err:
-            self.error(err)
+            logger.error(err)
             self.close_conn(conn)
 
     def execute_sql(self, conn, sql_statement):
         try:
-            self.debug(f"Executing SQL statement {sql_statement}")
+            logger.debug(f"Executing SQL statement {sql_statement}")
             cursor = conn.cursor()
             cursor.execute(sql_statement)
             if "INSERT" or "DELETE" or "CREATE" in sql_statement:
                 conn.commit()
             return cursor.fetchall()
         except sqlite3.Error as err:
-            self.exception(err)
-            self.close_conn
-
-
-class SQLChecker(BaseKeyClass):
-
-    def __init__(self, database: str) -> None:
-        self.database = database
-        self.sqler = Sqler(database)
+            logger.exception(err)
+            self.close_conn()

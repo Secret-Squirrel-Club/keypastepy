@@ -1,8 +1,9 @@
 #!/usr/bin/env python3
 
-from sqlite3.dbapi2 import Connection
+from sqlite3.dbapi2 import Connection, connect
 
 from PyQt5.QtCore import QThread
+from PyQt5.QtGui import QIcon
 from keypaste.sql_wrapper import Sqler
 from keypaste.formulate_queries import (
     FormulateInsertData,
@@ -11,22 +12,20 @@ from keypaste.formulate_queries import (
 )
 import sys
 from PyQt5.QtWidgets import (
-    QApplication,
+    QAction, QApplication, QMenu, QSystemTrayIcon,
     QWidget,
     QVBoxLayout,
     QFormLayout,
     QLineEdit,
     QDialogButtonBox,
     QComboBox,
-    QLabel
-
+    QLabel,
 )
 from keypaste.base import BaseKeyClass
 
 class BaseGUIBuilder(BaseKeyClass):
     def __init__(self):
         super().__init__()
-        self.app = QApplication(sys.argv)
         self.window = QWidget()
         self.window.setWindowTitle("Keypaste")
         self.window.setGeometry(100, 100, 200, 200)
@@ -35,33 +34,62 @@ class BaseGUIBuilder(BaseKeyClass):
         self.window.show()
 
     def run_event_loop(self):
-        sys.exit(self.app.exec())
+        self.app.exec()
 
     def _start_event(self):
         pass
 
+    def create_gui(self):
+        pass
+        
     def exit_app(self):
         self.app.exit()
 
-class CloneThread(QThread):
-    
-    def __init__(self) -> None:
-        super.__init__(self)
-    
-    def run(self):
-        pass
-class EntryGUI(BaseGUIBuilder):
-    def __init__(self, sql_client: Sqler):
+class MenuGUI(BaseKeyClass):
+    def __init__(self):
         super().__init__()
+        self.app = QApplication(sys.argv)
+        self.icon = QIcon("keypaste/keyboard--pencil.png") 
+        self.createStatus()
+        
+    def createStatus(self):
+        entry = EntryGUI()
+        delete = DeleteEntryGUI()
+        viewer = ViewEntriesGUI()
+        """
+        actions = [
+           QAction("Add Entry"),
+           QAction("Delete Entry"),
+           QAction("View All"),
+           QAction("Quit")
+        ]
+        """
+        tray = QSystemTrayIcon()
+        tray.setIcon(self.icon)
+        tray.setVisible(True)
+        menu = QMenu()
+        menu.addAction(QAction("Add Entry").triggered.connect(entry._create_entry_widgets)) 
+        menu.addAction(QAction("Quit").triggered.connect(self.app.quit))
+        tray.setContextMenu(menu)
+        self.run()
+
+    def run(self):
+        self.app.exec() 
+
+class EntryGUI(BaseKeyClass):
+    def __init__(self):
+        super().__init__()
+        self.app = QApplication(sys.argv)
+        self.window = QWidget()
+        self.window.setWindowTitle("Keypaste")
+        self.window.setGeometry(100, 100, 200, 200)
         self.key_input = QLineEdit()
         self.paste_input = QLineEdit()
-        self.sql_client = sql_client
-        self.sql_conn = sql_client.connect_to_db()
         self._create_entry_widgets()
 
     def _cancel_app(self):
         self.debug("Killing App via cancel button")
-        self.exit_app()
+        self.app.exit()
 
     def _start_event(self):
         self.debug(f"Inserting data into database \
@@ -74,10 +102,11 @@ class EntryGUI(BaseGUIBuilder):
         self.sql_client.execute_sql(self.sql_conn, insert_query)
         self.debug("Successfully ran query into database")
         self.debug("Killing Entry app cause operation is done")
-        self.exit_app()
+        self.app.exit()
 
     def _create_entry_widgets(self):
         self.debug("Starting entry widgets")
+        print("print 1")
         dlgLayout = QVBoxLayout()
         formLayout = QFormLayout()
         formLayout.addRow("Key:", self.key_input)
@@ -87,27 +116,26 @@ class EntryGUI(BaseGUIBuilder):
         btns.setStandardButtons(
             QDialogButtonBox.Cancel | QDialogButtonBox.Ok
         )
-
         btns.accepted.connect(self._start_event)
         btns.rejected.connect(self._cancel_app)
         dlgLayout.addWidget(btns)
-
         self.window.setLayout(dlgLayout)
-        self.show_window()
-        self.run_event_loop()
+    def run(self):
+        self.window.show()
+        self.app.exec()
 
-
-class DeleteEntryGUI(BaseGUIBuilder):
-    def __init__(self, sql_client: Sqler):
+class DeleteEntryGUI(BaseKeyClass):
+    def __init__(self):
         super().__init__()
-        self.sql_client = sql_client
-        self.sql_conn = sql_client.connect_to_db()
+        self.app = QApplication(sys.argv)
+        self.window = QWidget()
+        self.window.setWindowTitle("Keypaste")
+        self.window.setGeometry(100, 100, 200, 200)
         self.combo = QComboBox()
-        self._create_delete_widgets()
 
     def _cancel_app(self):
         self.debug("Cancelled via cancel button")
-        self.exit_app()
+        self.app.exit()
 
     def _start_event(self):
         current_text = self.combo.currentText()
@@ -116,7 +144,7 @@ class DeleteEntryGUI(BaseGUIBuilder):
         self.sql_client.execute_sql(self.sql_conn, delete_query)
         self.debug("Deleted entry")
         self.debug("Delete Operation is complete, Closing app")
-        self.exit_app()
+        self.app.exit()
 
     def add_items_to_combo(self):
         view_query = FormulateViewQuery().query('keypaste')
@@ -140,20 +168,17 @@ class DeleteEntryGUI(BaseGUIBuilder):
         dlgLayout.addWidget(btns)
         self.window.setLayout(dlgLayout)
 
-        self.show_window()
-        self.run_event_loop()
-
-
-class ViewEntriesGUI(BaseGUIBuilder):
-    def __init__(self, sql_client: Sqler): 
+    def run(self):
+        self.window.show()
+        self.app.exec()
+        
+class ViewEntriesGUI(BaseKeyClass):
+    def __init__(self): 
         super().__init__()
-        self.sql_client = sql_client
-        self.sql_conn = sql_client.connect_to_db()
-        self._create_viewer()
 
     def _cancel_app(self):
         self.debug("Canceled app via cancel button")
-        self.exit_app()
+        self.app.exit()
 
     def _create_viewer(self):
         self.debug("Creating Viewer Widget")
@@ -173,5 +198,6 @@ class ViewEntriesGUI(BaseGUIBuilder):
         dlgLayout.addWidget(btns)
         self.window.setLayout(dlgLayout)
 
-        self.show_window()
-        self.run_event_loop()
+    def run(self):
+        self.window.show()
+        self.app.exec()

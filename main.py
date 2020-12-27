@@ -1,18 +1,19 @@
 #!/usr/bin/env  python3
 
+import multiprocessing
 import rumps
 import getpass
 import os
 import sys
-import keyboard
+import time
 import threading
 import sqlite3
+import keyboard
 from keypaste.keypaste import (
     BuildKeypaste
 )
 from keypaste.base import BaseKeyClass, KeyPasteException
 from keypaste.basegui import (
-    CloneThread,
     EntryGUI,
     DeleteEntryGUI,
     ViewEntriesGUI,
@@ -30,13 +31,37 @@ REMOVE_UNI = "\u26D4"
 VIEW_UNI = "\u1F4BE"
 ERR_MESSAGE = "BAD INPUT"
 
+class RunKeypasteGUI(BaseKeyClass):
+    def __init__(self):
+        super().__init__()
+        self.config = {
+            "app_name": "Keypaste",
+            "add": f"{ADD_UNI} Add Entry",
+            "delete": f"{REMOVE_UNI} Delete Entry",
+            "view": "View All", 
+        }
+        self.app = rumps.App(self.config["app_name"])
+        self.entry = rumps.MenuItem(title=self.config["add"], callback=self.run_entry)
+        self.delete = rumps.MenuItem(title=self.config["delete"], callback=self.delete_entry)
+        self.view = rumps.MenuItem(title=self.config["view"], callback=self.viewer)
+        self.app.menu = [self.entry, self.delete, self.view]
+        
+    def run_entry(self, sender):
+        EntryGUI(self.sql)
+       
+    def delete_entry(self, sender):
+        DeleteEntryGUI(self.sql)
 
+    def viewer(self, sender):
+        ViewEntriesGUI(self.sql)
+    
+    def run(self):
+        self.info("Starting app thread")
+        return self.app
 class RunKeypaste(BaseKeyClass):
 
-    def __init__(self, path):
+    def __init__(self):
         super().__init__()
-        self.path = path
-        self.full_path = os.path.join(self.path, "keypaste.db")
         self.config = {
             "app_name": "Keypaste",
             "add": f"{ADD_UNI} Add Entry",
@@ -44,24 +69,7 @@ class RunKeypaste(BaseKeyClass):
             "view": "View All",
             
         }
-        self.checking_db_path()
-        self.sql = Sqler(self.full_path)
-        self.conn = self.sql.connect_to_db()
         self.app = rumps.App(self.config["app_name"])
-        self.entry = rumps.MenuItem(title=self.config["add"], callback=self.run_entry)
-        self.delete = rumps.MenuItem(title=self.config["delete"], callback=self.delete_entry)
-        self.view = rumps.MenuItem(title=self.config["view"], callback=self.viewer)
-        self.app.menu = [self.entry, self.delete, self.view]
-
-    def checking_db_path(self):
-        self.debug(f"Using path: {self.path}")
-        if not os.path.isdir(self.path):
-            self.info("Directory doesn't exist, creating...")
-            os.makedirs(self.path)
-        self.debug(f"Using {self.full_path} as database")
-        if not os.path.isfile(self.full_path):
-            self.info(f"Creating file {self.full_path}")
-            open(f'{self.full_path}', 'a').close()
 
     def check_table_exists(self):
         show_table = FormulateShowTables().query()
@@ -87,7 +95,6 @@ class RunKeypaste(BaseKeyClass):
             return True
 
     def load_existing_keys(self):
-        import pdb
         view_query = FormulateViewQuery().query("keypaste")
         try:
             keys = []
@@ -102,20 +109,9 @@ class RunKeypaste(BaseKeyClass):
 
     def keyboard_thread(self, keys):
         self.info("Starting Keyboard Thread...")
-        if len(keys) != 0:
-            for keypaste in keys:
-                keyboard.add_hotkey(f"{keypaste.get_command()}", 
-                                    lambda: keyboard.write(f"{keypaste.get_paste()}"))
+        keyboard.add_hotkey('command+x', lambda: keyboard.write('foobar'))
         keyboard.wait()
-
-    def run_entry(self, sender):
-        EntryGUI(self.sql)
-        reload(self.keyboard_thread)
-    def delete_entry(self, sender):
-        DeleteEntryGUI(self.sql)
-        reload(self.keyboard_thread)
-    def viewer(self, sender):
-        ViewEntriesGUI(self.sql)
+    
     def run(self):
         self.debug("Checking if user is root...")
         if getpass.os.getuid() != 0:
@@ -125,12 +121,16 @@ class RunKeypaste(BaseKeyClass):
         if not self.check_table_exists():
             raise KeyPasteException("Could not create table")
         keys = self.load_existing_keys()
-        keyboard.call_later(fn=self.keyboard_thread, args=[keys])
-        self.info("Starting app thread")
-        self.app.run()
-
+        #process = multiprocessing.Process(target=self.keyboard_thread, args=(keys))
+        #process.start()
+        thread = threading.Thread(target=self.keyboard_thread, args=(keys))
+        return thread
 if __name__ == "__main__":
     directory = f"/Users/{getpass.getuser()}/.keypaste/"
-    print(directory)
-    run = RunKeypaste(directory)
-    run.run()
+    keyboard_thread = RunKeypaste(directory).run()
+    keyboard_thread.start()
+    app = RunKeypasteGUI().run()
+    app.run()
+    # app_thread = threading.Thread(target=app.run)
+    #app_thread.daemon = True
+    #app_thread.start() 

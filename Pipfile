@@ -11,6 +11,7 @@ rumps = "*"
 appjar = "*"
 pyqt5 = "*"
 keyboard = "*"
+pyautogui = "*"
 
 [dev-packages]
 

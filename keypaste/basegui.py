@@ -62,8 +62,8 @@ class EntryGUI(BaseGUIBuilder):
 
     def _start_event(self):
         self.debug(f"Inserting data into database \
-                   {self.key_input.text()} as command\
-                   {self.paste_input.text()} as key")
+                    {self.key_input.text()} as command\
+                    {self.paste_input.text()} as key")
         keypaste = Keypaste(
             self.key_input.text(),
             self.paste_input.text()
@@ -72,7 +72,6 @@ class EntryGUI(BaseGUIBuilder):
         self.debug("Successfully ran query into database")
         self.debug("Killing Entry app cause operation is done")
         self.exit_app()
-
     def _create_entry_widgets(self):
         self.debug("Starting entry widgets")
         dlgLayout = QVBoxLayout()
@@ -132,7 +131,6 @@ class DeleteEntryGUI(BaseGUIBuilder):
         btns.rejected.connect(self._cancel_app)
         dlgLayout.addWidget(btns)
         self.window.setLayout(dlgLayout)
-
         self.show_window()
         self.run_event_loop()
 

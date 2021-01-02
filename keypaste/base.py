@@ -32,6 +32,9 @@ class BaseKeyClass(object):
 
     def set_level(self, log_level):
         return self.logger.setLevel(log_level)
+    
+    def get_level(self):
+        return self.logger.level
 
     def debug(self, message: str):
         return self.logger.debug(message)
@@ -54,7 +57,7 @@ class BaseKeyClass(object):
     def load_config_json(self):
         with open(self.config_file) as config:
             return json.load(config)
-        
+
 class PickleWrap(object):
     
     def __init__(self, full_path_file):

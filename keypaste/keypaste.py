@@ -53,7 +53,7 @@ class Keypaste(object):
     def set_paste(self, new_paste: str):
         self.__paste = new_paste
 
-    def write(self):
+    def write(self, _):
         CONTROLLER.type(self.get_paste()) 
 
 class BuildKeypaste(object):

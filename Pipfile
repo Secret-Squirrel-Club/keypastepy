@@ -12,6 +12,7 @@ appjar = "*"
 pyqt5 = "*"
 keyboard = "*"
 pyautogui = "*"
+requests = "*"
 
 [dev-packages]
 

@@ -1,12 +1,6 @@
 #!/usr/bin/env python3
 
-from keypaste.keypaste import Keypaste
-from PyQt5.QtCore import QThread
-from keypaste.formulate_queries import (
-    FormulateInsertData,
-    FormulateViewQuery,
-    FormulateDeleteEntry,
-)
+import pync
 import sys
 from PyQt5.QtWidgets import (
     QApplication,
@@ -16,12 +10,13 @@ from PyQt5.QtWidgets import (
     QLineEdit,
     QDialogButtonBox,
     QComboBox,
-    QLabel
-
+    QLabel,
 )
+from keypaste.keypaste import Keypaste
 from keypaste.base import (
     BaseKeyClass,
 )
+
 
 class BaseGUIBuilder(BaseKeyClass):
     def __init__(self):
@@ -42,14 +37,10 @@ class BaseGUIBuilder(BaseKeyClass):
 
     def exit_app(self):
         self.app.exit()
-class CloneThread(QThread):
-    
-    def __init__(self) -> None:
-        super.__init__(self)
-    
-    def run(self):
-        pass
+
+
 class EntryGUI(BaseGUIBuilder):
+
     def __init__(self):
         super().__init__()
         self.key_input = QLineEdit()
@@ -70,8 +61,13 @@ class EntryGUI(BaseGUIBuilder):
         )
         self.pickle.append_and_reload(keypaste)
         self.debug("Successfully ran query into database")
+        self.debug("Creating notification")
+        note = f"Added {keypaste.get_command()}, Update entries to reflect"
+        pync.notify(note,
+                    title="Keypaste")
         self.debug("Killing Entry app cause operation is done")
         self.exit_app()
+
     def _create_entry_widgets(self):
         self.debug("Starting entry widgets")
         dlgLayout = QVBoxLayout()
@@ -108,6 +104,9 @@ class DeleteEntryGUI(BaseGUIBuilder):
         self.debug(f"Deleting {current_text}")
         self.pickle.delete_and_reload(current_text)
         self.debug("Deleted entry")
+        note = f"Deleted {current_text}, Update entries to reflect changes"
+        pync.notify(note,
+                    title="Keypaste")
         self.debug("Delete Operation is complete, Closing app")
         self.exit_app()
 
@@ -136,7 +135,7 @@ class DeleteEntryGUI(BaseGUIBuilder):
 
 
 class ViewEntriesGUI(BaseGUIBuilder):
-    def __init__(self): 
+    def __init__(self):
         super().__init__()
         self._create_viewer()
 

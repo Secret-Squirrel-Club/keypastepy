@@ -1,11 +1,9 @@
 #!/usr/bin/env python3
 from typing import Tuple
 from pynput import keyboard
-import threading
-
-threadLock = threading.Lock()
 
 CONTROLLER = keyboard.Controller()
+
 
 class Command(object):
     def __init__(self, command: str) -> None:
@@ -54,7 +52,8 @@ class Keypaste(object):
         self.__paste = new_paste
 
     def write(self, _):
-        CONTROLLER.type(self.get_paste()) 
+        CONTROLLER.type(self.get_paste())
+
 
 class BuildKeypaste(object):
 

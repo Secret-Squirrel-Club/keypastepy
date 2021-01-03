@@ -7,6 +7,16 @@ name = "pypi"
 flake8 = "*"
 pytest = "*"
 pynput = "*"
+rumps = "*"
+appjar = "*"
+pyqt5 = "*"
+keyboard = "*"
+pyautogui = "*"
+requests = "*"
+notifypy = "*"
+notify-py = "*"
+pync = "*"
+pyinstaller = "*"
 
 [dev-packages]
 

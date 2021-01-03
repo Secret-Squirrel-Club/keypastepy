@@ -1,12 +1,6 @@
 #!/usr/bin/env python3
 
-from keypaste.keypaste import Keypaste
-from PyQt5.QtCore import QThread
-from keypaste.formulate_queries import (
-    FormulateInsertData,
-    FormulateViewQuery,
-    FormulateDeleteEntry,
-)
+import pync
 import sys
 from PyQt5.QtWidgets import (
     QApplication,
@@ -16,12 +10,13 @@ from PyQt5.QtWidgets import (
     QLineEdit,
     QDialogButtonBox,
     QComboBox,
-    QLabel
-
+    QLabel,
 )
+from keypaste.keypaste import Keypaste
 from keypaste.base import (
     BaseKeyClass,
 )
+
 
 class BaseGUIBuilder(BaseKeyClass):
     def __init__(self):
@@ -42,14 +37,10 @@ class BaseGUIBuilder(BaseKeyClass):
 
     def exit_app(self):
         self.app.exit()
-class CloneThread(QThread):
-    
-    def __init__(self) -> None:
-        super.__init__(self)
-    
-    def run(self):
-        pass
+
+
 class EntryGUI(BaseGUIBuilder):
+
     def __init__(self):
         super().__init__()
         self.key_input = QLineEdit()
@@ -62,14 +53,18 @@ class EntryGUI(BaseGUIBuilder):
 
     def _start_event(self):
         self.debug(f"Inserting data into database \
-                   {self.key_input.text()} as command\
-                   {self.paste_input.text()} as key")
+                    {self.key_input.text()} as command\
+                    {self.paste_input.text()} as key")
         keypaste = Keypaste(
             self.key_input.text(),
             self.paste_input.text()
         )
         self.pickle.append_and_reload(keypaste)
         self.debug("Successfully ran query into database")
+        self.debug("Creating notification")
+        note = f"Added {keypaste.get_command()}, Update entries to reflect"
+        pync.notify(note,
+                    title="Keypaste")
         self.debug("Killing Entry app cause operation is done")
         self.exit_app()
 
@@ -109,6 +104,9 @@ class DeleteEntryGUI(BaseGUIBuilder):
         self.debug(f"Deleting {current_text}")
         self.pickle.delete_and_reload(current_text)
         self.debug("Deleted entry")
+        note = f"Deleted {current_text}, Update entries to reflect changes"
+        pync.notify(note,
+                    title="Keypaste")
         self.debug("Delete Operation is complete, Closing app")
         self.exit_app()
 
@@ -132,13 +130,12 @@ class DeleteEntryGUI(BaseGUIBuilder):
         btns.rejected.connect(self._cancel_app)
         dlgLayout.addWidget(btns)
         self.window.setLayout(dlgLayout)
-
         self.show_window()
         self.run_event_loop()
 
 
 class ViewEntriesGUI(BaseGUIBuilder):
-    def __init__(self): 
+    def __init__(self):
         super().__init__()
         self._create_viewer()
 

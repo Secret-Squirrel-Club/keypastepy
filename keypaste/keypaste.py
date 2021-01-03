@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 from typing import Tuple
+import keyboard
 
 
 class Command(object):
@@ -47,6 +48,9 @@ class Keypaste(object):
 
     def set_paste(self, new_paste: str):
         self.__paste = new_paste
+
+    def write(self, _):
+        keyboard.write(self.get_paste())
 
 
 class BuildKeypaste(object):

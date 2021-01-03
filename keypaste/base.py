@@ -1,11 +1,12 @@
 #!/usr/bin/env python3
 
-from keypaste.keypaste import Keypaste
+
 import logging
 import pickle
 import os
 import json
-
+from pathlib import Path
+from keypaste.keypaste import Keypaste
 
 formatter = logging.Formatter(
     "%(levelname)s:%(asctime)s:%(name)s: %(message)s"
@@ -15,6 +16,7 @@ sh.setFormatter(formatter)
 logger = logging.getLogger(__name__)
 logger.addHandler(sh)
 logger.setLevel(logging.DEBUG)
+USER_HOME = str(Path.home())
 
 
 class KeyPasteException(Exception):
@@ -25,7 +27,7 @@ class BaseKeyClass(object):
 
     def __init__(self):
         self.logger = logger
-        self.config_file = "/etc/keypaste/keypaste.json"
+        self.config_file = f"{USER_HOME}/.keypaste/keypaste.json"
         self.config_json = self.load_config_json()
         self.storage_file = self.config_json.get("stored_file")
         self.pickle = PickleWrap(self.storage_file)
@@ -58,7 +60,7 @@ class BaseKeyClass(object):
         config_dir = os.path.dirname(self.config_file)
         if not os.path.isdir(config_dir):
             os.mkdir(config_dir)
-        json_dict = {"stored_file": "/etc/keypaste/keypaste.dat"}
+        json_dict = {"stored_file": f"{USER_HOME}/.keypaste/keypaste.dat"}
         with open(self.config_file, "w") as config_file:
             json.dump(json_dict, config_file)
 
@@ -103,7 +105,7 @@ class PickleWrap(object):
         for keypaste in original:
             if obj.get_command() == keypaste.get_command():
                 self.logger.debug("Object already in pickle")
-                return original
+                raise KeyPasteException
         self.logger.debug(f"Adding {obj.get_command()} to file")
         original.append(obj)
         self.write_to_file(original)
@@ -130,8 +132,14 @@ class PickleWrap(object):
         self.write_to_file([])
         return self.loadall()
 
+    def get_last_keypaste(self):
+        all_keys = self.loadall()
+        last_key = all_keys[-1]
+        return last_key
+
     def checking_db_path(self):
         self.logger.debug(f"Using {self.full_path_file} as storage file")
         if not os.path.isfile(self.full_path_file):
             self.logger.info(f"Creating file {self.full_path_file}")
-            open(self.full_path_file, 'a').close()
+            ex_keypaste = Keypaste("Example", "This is an Example")
+            self.write_to_file([ex_keypaste])

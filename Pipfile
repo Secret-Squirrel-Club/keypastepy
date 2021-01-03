@@ -16,6 +16,7 @@ requests = "*"
 notifypy = "*"
 notify-py = "*"
 pync = "*"
+pyinstaller = "*"
 
 [dev-packages]
 

@@ -1,8 +1,6 @@
 #!/usr/bin/env python3
 from typing import Tuple
-from pynput import keyboard
-
-CONTROLLER = keyboard.Controller()
+import keyboard
 
 
 class Command(object):
@@ -52,7 +50,7 @@ class Keypaste(object):
         self.__paste = new_paste
 
     def write(self, _):
-        CONTROLLER.type(self.get_paste())
+        keyboard.write(self.get_paste())
 
 
 class BuildKeypaste(object):

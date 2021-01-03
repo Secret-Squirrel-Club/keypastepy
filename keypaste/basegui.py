@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
-import pync
 import sys
+import rumps
 from PyQt5.QtWidgets import (
     QApplication,
     QWidget,
@@ -14,7 +14,7 @@ from PyQt5.QtWidgets import (
 )
 from keypaste.keypaste import Keypaste
 from keypaste.base import (
-    BaseKeyClass,
+    BaseKeyClass, KeyPasteException,
 )
 
 
@@ -41,10 +41,11 @@ class BaseGUIBuilder(BaseKeyClass):
 
 class EntryGUI(BaseGUIBuilder):
 
-    def __init__(self):
+    def __init__(self, menu):
         super().__init__()
         self.key_input = QLineEdit()
         self.paste_input = QLineEdit()
+        self.menu = menu
         self._create_entry_widgets()
 
     def _cancel_app(self):
@@ -59,14 +60,21 @@ class EntryGUI(BaseGUIBuilder):
             self.key_input.text(),
             self.paste_input.text()
         )
-        self.pickle.append_and_reload(keypaste)
+        try:
+            self.pickle.append_and_reload(keypaste)
+        except KeyPasteException:
+            self.debug("Key is already in there")
+            self.window.close()
         self.debug("Successfully ran query into database")
-        self.debug("Creating notification")
-        note = f"Added {keypaste.get_command()}, Update entries to reflect"
-        pync.notify(note,
-                    title="Keypaste")
+        self.debug("Updating app with new entries")
+        pastes = self.menu.get("Pastes")
+        menu_add = rumps.MenuItem(
+            title=keypaste.get_command(),
+            callback=keypaste.write
+            )
+        pastes.add(menu_add)
         self.debug("Killing Entry app cause operation is done")
-        self.exit_app()
+        self.window.close()
 
     def _create_entry_widgets(self):
         self.debug("Starting entry widgets")
@@ -90,9 +98,10 @@ class EntryGUI(BaseGUIBuilder):
 
 
 class DeleteEntryGUI(BaseGUIBuilder):
-    def __init__(self):
+    def __init__(self, menu):
         super().__init__()
         self.combo = QComboBox()
+        self.menu = menu
         self._create_delete_widgets()
 
     def _cancel_app(self):
@@ -103,10 +112,10 @@ class DeleteEntryGUI(BaseGUIBuilder):
         current_text = self.combo.currentText()
         self.debug(f"Deleting {current_text}")
         self.pickle.delete_and_reload(current_text)
+        self.debug("Deleted from menu")
+        pastes = self.menu.get("Pastes")
+        del pastes[current_text]
         self.debug("Deleted entry")
-        note = f"Deleted {current_text}, Update entries to reflect changes"
-        pync.notify(note,
-                    title="Keypaste")
         self.debug("Delete Operation is complete, Closing app")
         self.exit_app()
 

@@ -1,0 +1,24 @@
+[[source]]
+url = "https://pypi.org/simple"
+verify_ssl = true
+name = "pypi"
+
+[packages]
+flake8 = "*"
+pytest = "*"
+pynput = "*"
+rumps = "*"
+appjar = "*"
+pyqt5 = "*"
+keyboard = "*"
+pyautogui = "*"
+requests = "*"
+notifypy = "*"
+notify-py = "*"
+pync = "*"
+pyinstaller = "*"
+
+[dev-packages]
+
+[requires]
+python_version = "3.8"

@@ -4,6 +4,7 @@ import rumps
 import os
 import sys
 import logging
+from keypaste import keypaste
 from keypaste.base import (
     BaseKeyClass,
     PickleWrap
@@ -61,8 +62,17 @@ class RunKeypaste(BaseKeyClass):
         ViewEntriesGUI()
 
     def update_menu(self, _):
+        import pdb
         self.debug("Updating app with new entries")
-        os.execl(sys.executable, sys.executable, * sys.argv)
+        recent = self.pickle.get_last_keypaste()
+        pastes = self.app.menu.get("Pastes")
+        menu_add = rumps.MenuItem(
+            title=recent.get_command(),
+            callback=recent.write
+            )
+        #Add to main menu
+        pdb.set_trace()
+        #os.execl(sys.executable, sys.executable, * sys.argv)
 
     def create_menu(self, keys):
         self.debug("Creating Menus")

@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 import sys
+from PyQt5 import QtWidgets
 from PyQt5.QtWidgets import (
     QApplication,
     QWidget,
@@ -20,7 +21,7 @@ from keypaste.base import (
 class BaseGUIBuilder(BaseKeyClass):
     def __init__(self):
         super().__init__()
-        self.app = QApplication(sys.argv)
+        #self.app = QApplication(sys.argv)
         self.window = QWidget()
         self.window.setWindowTitle("Keypaste")
         self.window.setGeometry(100, 100, 200, 200)
@@ -37,7 +38,20 @@ class BaseGUIBuilder(BaseKeyClass):
     def exit_app(self):
         self.app.exit()
 
+class GUIController(BaseKeyClass):
+    def __init__(self):
+        pass
+    
+    def show_systemtray(self):
+        pass
 
+class SystemTray(QtWidgets.QSystemTrayIcon):
+    def __init__(self, icon, parent=None):
+        QtWidgets.QSystemTrayIcon.__init__(self, icon, parent)
+        self.menu = QtWidgets.QMenu(parent)
+        self.entry = self.menu.addAction("Entry")
+        self.delete = self.menu.addAction("Delete")
+        self.view = self.menu.addAction("view")
 class EntryGUI(BaseGUIBuilder):
 
     def __init__(self):
@@ -80,8 +94,11 @@ class EntryGUI(BaseGUIBuilder):
         dlgLayout.addWidget(btns)
 
         self.window.setLayout(dlgLayout)
-        self.show_window()
-        self.run_event_loop()
+        print("hello")
+        self.window
+        self.window.show()
+        #self.show_window()
+        #self.run_event_loop()
 
 
 class DeleteEntryGUI(BaseGUIBuilder):

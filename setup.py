@@ -8,12 +8,13 @@ Usage:
 from setuptools import setup
 
 APP = ['keypaste.py']
-DATA_FILES = []
+DATA_FILES = ["keyboard.icns"]
 OPTIONS = {
     'argv_emulation': True,
     'plist': {
         'LSUIElement': True,
     },
+    'iconfile': 'keyboard.icns',
     'packages': ['rumps'],
 }
 
@@ -23,7 +24,7 @@ setup(
     data_files=DATA_FILES,
     options={'py2app': OPTIONS},
     setup_requires=['py2app'],
-    install_requires = [
+    install_requires=[
         "keyboard; sys_platform=='darwin'",
         "rumps",
         "pyqt5"

@@ -2,6 +2,7 @@
 from typing import Tuple
 import keyboard
 
+
 class Command(object):
     def __init__(self, command: str) -> None:
         self.__command = command

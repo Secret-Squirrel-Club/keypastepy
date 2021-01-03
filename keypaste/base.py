@@ -18,6 +18,7 @@ logger.addHandler(sh)
 logger.setLevel(logging.DEBUG)
 USER_HOME = str(Path.home())
 
+
 class KeyPasteException(Exception):
     pass
 
@@ -104,7 +105,7 @@ class PickleWrap(object):
         for keypaste in original:
             if obj.get_command() == keypaste.get_command():
                 self.logger.debug("Object already in pickle")
-                return original
+                raise KeyPasteException
         self.logger.debug(f"Adding {obj.get_command()} to file")
         original.append(obj)
         self.write_to_file(original)
@@ -131,8 +132,14 @@ class PickleWrap(object):
         self.write_to_file([])
         return self.loadall()
 
+    def get_last_keypaste(self):
+        all_keys = self.loadall()
+        last_key = all_keys[-1]
+        return last_key
+
     def checking_db_path(self):
         self.logger.debug(f"Using {self.full_path_file} as storage file")
         if not os.path.isfile(self.full_path_file):
             self.logger.info(f"Creating file {self.full_path_file}")
-            open(self.full_path_file, 'a').close()
+            ex_keypaste = Keypaste("Example", "This is an Example")
+            self.write_to_file([ex_keypaste])

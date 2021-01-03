@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
 
-import pync
 import sys
 from PyQt5.QtWidgets import (
     QApplication,
@@ -61,10 +60,6 @@ class EntryGUI(BaseGUIBuilder):
         )
         self.pickle.append_and_reload(keypaste)
         self.debug("Successfully ran query into database")
-        self.debug("Creating notification")
-        note = f"Added {keypaste.get_command()}, Update entries to reflect"
-        pync.notify(note,
-                    title="Keypaste")
         self.debug("Killing Entry app cause operation is done")
         self.exit_app()
 
@@ -104,9 +99,6 @@ class DeleteEntryGUI(BaseGUIBuilder):
         self.debug(f"Deleting {current_text}")
         self.pickle.delete_and_reload(current_text)
         self.debug("Deleted entry")
-        note = f"Deleted {current_text}, Update entries to reflect changes"
-        pync.notify(note,
-                    title="Keypaste")
         self.debug("Delete Operation is complete, Closing app")
         self.exit_app()
 

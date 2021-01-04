@@ -1,5 +1,6 @@
 # Keypaste
 
+
 ## Welcome
 * This is an MacOS app that runs in the status bar
 * You can have custom phrases
@@ -23,3 +24,7 @@
 14. Profit!!! Everything should be good to go! 
 
 ## USE
+
+For Your Support!
+
+<a href="https://www.buymeacoffee.com/thefinaljoke" target="_blank"><img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png" alt="Buy Me A Coffee" style="height: 60px !important;width: 217px !important;" ></a>

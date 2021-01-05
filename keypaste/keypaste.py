@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 from typing import Tuple
 import keyboard
+import pyperclip
 
 
 class Command(object):
@@ -51,6 +52,9 @@ class Keypaste(object):
 
     def write(self, _):
         keyboard.write(self.get_paste())
+    
+    def copy_to_clipboard(self, _):
+        pyperclip.copy(self.get_paste()) 
 
 
 class BuildKeypaste(object):

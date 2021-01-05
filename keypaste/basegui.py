@@ -68,9 +68,17 @@ class EntryGUI(BaseGUIBuilder):
         self.debug("Successfully ran query into database")
         self.debug("Updating app with new entries")
         pastes = self.menu.get("Pastes")
-        menu_add = rumps.MenuItem(
-            title=keypaste.get_command(),
-            callback=keypaste.write
+        if not self.copy_clipboard:
+            self.debug("Config says to use write to screen")
+            menu_add = rumps.MenuItem(
+                title=keypaste.get_command(),
+                callback=keypaste.write
+                )
+        else:
+            self.debug("Config says to copy to buffer")
+            menu_add = rumps.MenuItem(
+                title=keypaste.get_command(),
+                callback=keypaste.copy_to_clipboard
             )
         pastes.add(menu_add)
         self.debug("Killing Entry app cause operation is done")

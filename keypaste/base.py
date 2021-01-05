@@ -30,6 +30,7 @@ class BaseKeyClass(object):
         self.config_file = f"{USER_HOME}/.keypaste/keypaste.json"
         self.config_json = self.load_config_json()
         self.storage_file = self.config_json.get("stored_file")
+        self.copy_clipboard = self.config_json.get("copy_to_clipboard")
         self.pickle = PickleWrap(self.storage_file)
 
     def set_level(self, log_level):
@@ -60,7 +61,8 @@ class BaseKeyClass(object):
         config_dir = os.path.dirname(self.config_file)
         if not os.path.isdir(config_dir):
             os.mkdir(config_dir)
-        json_dict = {"stored_file": f"{USER_HOME}/.keypaste/keypaste.dat"}
+        json_dict = {"stored_file": f"{USER_HOME}/.keypaste/keypaste.dat",
+                     "copy_to_clipboard": False}
         with open(self.config_file, "w") as config_file:
             json.dump(json_dict, config_file)
 

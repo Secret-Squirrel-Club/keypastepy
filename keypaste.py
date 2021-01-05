@@ -2,7 +2,6 @@
 
 import rumps
 import logging
-import pyperclip
 from keypaste.base import (
     BaseKeyClass,
     PickleWrap

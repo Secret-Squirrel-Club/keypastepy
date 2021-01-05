@@ -59,10 +59,18 @@ class RunKeypaste(BaseKeyClass):
         sub_list = []
         for keypaste in keys:
             self.debug(f"Added {keypaste.get_command()} to menu")
-            sub_list.append(rumps.MenuItem(
-                title=keypaste.get_command(),
-                callback=keypaste.write
-            ))
+            if not self.copy_clipboard:
+                self.debug("Config says to write it to screen")
+                sub_list.append(rumps.MenuItem(
+                    title=keypaste.get_command(),
+                    callback=keypaste.write
+                ))
+            else:
+                self.debug("Config says to copy to buffer")
+                sub_list.append(rumps.MenuItem(
+                    title=keypaste.get_command(),
+                    callback=keypaste.copy_to_clipboard
+                ))
         menu_list.append(("Pastes", [item for item in sub_list]))
         self.app.menu = menu_list
 
